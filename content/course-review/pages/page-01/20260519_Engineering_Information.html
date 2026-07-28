@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>工程資訊與空間管理 AI 實務專題演講</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #5c6b7a;
+      --line: #d8e0e8;
+      --paper: #f6f8fb;
+      --white: #ffffff;
+      --teal: #0f766e;
+      --blue: #285a8f;
+      --amber: #b7791f;
+      --green-soft: #e6f4f1;
+      --blue-soft: #eaf1f8;
+      --amber-soft: #fff5df;
+      --shadow: 0 16px 40px rgba(23, 32, 42, .11);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Microsoft JhengHei", "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.65;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .hero {
+      min-height: 88vh;
+      display: grid;
+      align-items: end;
+      position: relative;
+      overflow: hidden;
+      background: #111923;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(9, 15, 24, .88), rgba(9, 15, 24, .56) 44%, rgba(9, 15, 24, .18)),
+        url("https://drive.google.com/thumbnail?id=1hJCdrkfV0KQ7WkP3I0DJkj3VgCPzUZA3&sz=w2000") center / cover no-repeat;
+      transform: scale(1.02);
+    }
+
+    .hero-inner {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 96px 0 64px;
+      position: relative;
+      z-index: 1;
+      color: white;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      color: #bce8e0;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 3px;
+      background: #7dd3c7;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 880px;
+      font-size: clamp(2.35rem, 6vw, 5.2rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      max-width: 760px;
+      margin: 24px 0 0;
+      font-size: 1.18rem;
+      color: #e4edf4;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 18px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, .32);
+      background: rgba(255, 255, 255, .14);
+      color: white;
+      font-weight: 700;
+      text-decoration: none;
+      backdrop-filter: blur(8px);
+    }
+
+    .button.primary {
+      background: #0f766e;
+      border-color: #0f766e;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: rgba(255, 255, 255, .94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-inner {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 0;
+    }
+
+    .nav-inner a {
+      white-space: nowrap;
+      text-decoration: none;
+      color: var(--muted);
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+
+    .nav-inner a:hover {
+      color: var(--teal);
+      background: var(--green-soft);
+    }
+
+    main {
+      background: var(--paper);
+    }
+
+    section {
+      padding: 72px 0;
+    }
+
+    .wrap {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .section-title {
+      max-width: 780px;
+      margin-bottom: 28px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: clamp(1.8rem, 3vw, 2.75rem);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.16rem;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 22px;
+      box-shadow: 0 10px 28px rgba(23, 32, 42, .06);
+    }
+
+    .card.teal {
+      background: var(--green-soft);
+      border-color: #b7ded7;
+    }
+
+    .card.blue {
+      background: var(--blue-soft);
+      border-color: #c4d7ea;
+    }
+
+    .card.amber {
+      background: var(--amber-soft);
+      border-color: #f0d69d;
+    }
+
+    .quote {
+      border-left: 5px solid var(--teal);
+      padding: 20px 24px;
+      background: var(--white);
+      border-radius: 8px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .pill-list li {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #edf2f7;
+      color: #334155;
+      font-weight: 700;
+      font-size: .92rem;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .metric {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 2rem;
+      line-height: 1.1;
+      color: var(--blue);
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th {
+      color: #223247;
+      background: #edf2f7;
+      font-weight: 800;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .gallery-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr);
+      gap: 24px;
+      align-items: center;
+    }
+
+    .gallery-item {
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #dfe7ef;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+
+    .gallery-item img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+    }
+
+    .open-link {
+      display: inline-flex;
+      margin-top: 16px;
+      color: var(--teal);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 20;
+      background: rgba(5, 10, 18, .88);
+    }
+
+    .lightbox.open {
+      display: flex;
+    }
+
+    .lightbox-panel {
+      width: min(1040px, 100%);
+      background: #101820;
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 20px 70px rgba(0, 0, 0, .4);
+    }
+
+    .lightbox-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      color: white;
+    }
+
+    .lightbox-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      min-width: 38px;
+      height: 38px;
+      border: 1px solid rgba(255, 255, 255, .28);
+      border-radius: 6px;
+      color: white;
+      background: rgba(255, 255, 255, .08);
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    .lightbox img {
+      display: block;
+      width: 100%;
+      max-height: 78vh;
+      object-fit: contain;
+      background: #0b1117;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: .94rem;
+    }
+
+    .footer {
+      padding: 34px 0;
+      color: #dce6ef;
+      background: #14202c;
+    }
+
+    .footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 860px) {
+      .grid.two,
+      .grid.three,
+      .metric-row,
+      .gallery-layout {
+        grid-template-columns: 1fr;
+      }
+
+      section {
+        padding: 54px 0;
+      }
+
+      .hero {
+        min-height: 82vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero" id="top">
+    <div class="hero-inner">
+      <div class="eyebrow">2026/5/19 高階戰略場</div>
+      <h1>工程資訊與空間管理 AI 實務專題演講</h1>
+      <p class="hero-copy">從建築室內設計、工程管理到港務資料知識庫，本頁整理上午場演講、問卷分析與活動影像，呈現 AI 在工程場域可落地的工作方式。</p>
+      <div class="hero-actions">
+        <a class="button primary" href="#insight">閱讀重點</a>
+        <a class="button" href="#survey">查看問卷分析</a>
+      </div>
+    </div>
+  </header>
+
+  <nav aria-label="頁面導覽">
+    <div class="nav-inner">
+      <a href="#insight">核心觀點</a>
+      <a href="#engineering">工程管理</a>
+      <a href="#harbor">港務資料</a>
+      <a href="#survey">問卷分析</a>
+      <a href="#gallery">活動圖片</a>
+      <a href="#actions">導入建議</a>
+    </div>
+  </nav>
+
+  <main>
+    <section id="insight">
+      <div class="wrap">
+        <div class="section-title">
+          <h2>AI 是放大器，不是替代品</h2>
+          <p class="lead">講座主軸不是展示單一工具，而是說明 AI 如何協助專業者更快整理資料、生成方案、比對文件、保存經驗，並讓人把注意力放回判斷與決策。</p>
+        </div>
+        <div class="quote">AI 能放大能力、加速流程、降低門檻；但最後的判斷、決策與責任仍在人身上。</div>
+        <div class="grid three" style="margin-top: 24px;">
+          <article class="card teal">
+            <h3>先定義問題</h3>
+            <p>導入 AI 的起點不是「買工具」，而是說清楚工作中最繁瑣、最耗時、最依賴個人經驗的環節。</p>
+          </article>
+          <article class="card blue">
+            <h3>專業負責檢核</h3>
+            <p>AI 能快速產生圖、文字與表格，但尺寸、法規、材料、造價與施工可行性仍需由專業者判斷。</p>
+          </article>
+          <article class="card amber">
+            <h3>經驗轉成資產</h3>
+            <p>把圖面、會議紀錄、審查意見與資深人員經驗整理成知識庫，是工程組織導入 AI 的核心價值。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="engineering" style="background: #ffffff;">
+      <div class="wrap">
+        <div class="section-title">
+          <h2>工程管理管理的是不確定性</h2>
+          <p class="lead">時程表只是紀錄，圖面是理想狀態。真正的工程管理發生在材料、天氣、人員、現場變更與決策壓力同時出現的時候。</p>
+        </div>
+        <div class="grid two">
+          <article class="card">
+            <h3>傳統痛點</h3>
+            <ul class="pill-list" aria-label="傳統工程管理痛點">
+              <li>資訊分散</li>
+              <li>溝通成本高</li>
+              <li>決策依賴個人</li>
+              <li>圖面與現場落差</li>
+              <li>資料查找耗時</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>AI 可協助的工作</h3>
+            <ul class="pill-list" aria-label="AI 可協助的工作">
+              <li>圖面理解</li>
+              <li>數量估算</li>
+              <li>影像辨識</li>
+              <li>聲音辨識</li>
+              <li>OCR 文件辨識</li>
+              <li>會議紀錄整理</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="harbor">
+      <div class="wrap">
+        <div class="section-title">
+          <h2>港務與空間管理的資料整合</h2>
+          <p class="lead">現場討論指出，港務資料包含建港報告、防波堤、水理、測量、海洋監測、圖資、無人機巡檢與專家審查紀錄。這些資料若不能被查詢與比對，就難以支援新案決策。</p>
+        </div>
+        <div class="grid three">
+          <article class="card">
+            <h3>圖資查詢</h3>
+            <p>透過圖說數位化、OCR、座標系統與權限控管，讓現場人員能快速調閱特定碼頭或構造物資料。</p>
+          </article>
+          <article class="card">
+            <h3>歷史案例</h3>
+            <p>將歷年研究報告、監測成果與專家意見轉為可搜尋知識庫，協助主管理解過去決策脈絡。</p>
+          </article>
+          <article class="card">
+            <h3>權限與資安</h3>
+            <p>港口資料牽涉敏感資訊，導入 AI 時必須區分公開、內部、敏感與機密資料，並保留查詢紀錄。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="survey" style="background: #ffffff;">
+      <div class="wrap">
+        <div class="section-title">
+          <h2>問卷分析摘要</h2>
+          <p class="lead">問卷共回收 25 筆有效滿意度資料。公司別、單位別與測驗分數欄位未提供，因此本區聚焦於滿意度與開放式意見。</p>
+        </div>
+        <div class="metric-row">
+          <div class="metric"><strong>25</strong><span>有效回覆</span></div>
+          <div class="metric"><strong>9.43</strong><span>整體平均</span></div>
+          <div class="metric"><strong>16</strong><span>全滿分回覆者</span></div>
+          <div class="metric"><strong>9.60</strong><span>時間掌控平均</span></div>
+        </div>
+        <table aria-label="四大構面分析">
+          <thead>
+            <tr>
+              <th>構面</th>
+              <th>平均分數</th>
+              <th>9 分以上比例</th>
+              <th>觀察</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>課程與講師專業度</td>
+              <td>9.48</td>
+              <td>90.0%</td>
+              <td>講師實務經驗與案例分享是主要亮點。</td>
+            </tr>
+            <tr>
+              <td>課程安排與時間掌控</td>
+              <td>9.48</td>
+              <td>90.0%</td>
+              <td>整體安排獲肯定，時間掌控為單項最高。</td>
+            </tr>
+            <tr>
+              <td>學員互動與實質幫助</td>
+              <td>9.40</td>
+              <td>89.0%</td>
+              <td>學員感受到 AI 與工程實務的距離已接近可用階段。</td>
+            </tr>
+            <tr>
+              <td>行政環境與設備</td>
+              <td>9.38</td>
+              <td>90.0%</td>
+              <td>行政支援維持高滿意，但仍可留意低分個案原因。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="gallery">
+      <div class="wrap">
+        <div class="gallery-layout">
+          <button class="gallery-item" type="button" data-index="0" aria-label="開啟活動圖片預覽">
+            <img src="https://drive.google.com/thumbnail?id=1hJCdrkfV0KQ7WkP3I0DJkj3VgCPzUZA3&sz=w1600" alt="工程資訊與空間管理 AI 實務專題演講活動圖片">
+          </button>
+          <div>
+            <div class="section-title">
+              <h2>活動圖片</h2>
+              <p class="lead">本次提供一張活動圖片。點選圖片可開啟頁內預覽，原始 Google Drive 連結可於新分頁開啟。</p>
+            </div>
+            <a class="open-link" href="https://drive.google.com/file/d/1hJCdrkfV0KQ7WkP3I0DJkj3VgCPzUZA3/view?usp=drive_link" target="_blank" rel="noopener">開啟原始圖片</a>
+            <p class="note">圖片來源：`imglink.txt`</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="actions" style="background: #ffffff;">
+      <div class="wrap">
+        <div class="section-title">
+          <h2>後續導入建議</h2>
+          <p class="lead">依講座內容與問卷分析，後續可從小型可驗證案例開始，將 AI 從展示工具推進到工作流程改善。</p>
+        </div>
+        <div class="grid three">
+          <article class="card teal">
+            <h3>盤點痛點</h3>
+            <p>列出圖說查找、施工計畫書初審、會議紀錄、監測資料、現場照片分類等高頻需求。</p>
+          </article>
+          <article class="card blue">
+            <h3>建立資料清單</h3>
+            <p>區分紙本、PDF、CAD/BIM/GIS、Excel、照片、影片與感測資料，依重要性與敏感性排序。</p>
+          </article>
+          <article class="card amber">
+            <h3>人機協作</h3>
+            <p>AI 先整理資料與產生初稿，承辦與專業人員檢核，主管再依責任與權限做決策。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="lightbox" id="lightbox" aria-modal="true" role="dialog" aria-label="活動圖片預覽">
+    <div class="lightbox-panel">
+      <div class="lightbox-bar">
+        <strong id="lightboxTitle">活動圖片</strong>
+        <div class="lightbox-actions">
+          <a class="button" id="originalLink" href="https://drive.google.com/file/d/1hJCdrkfV0KQ7WkP3I0DJkj3VgCPzUZA3/view?usp=drive_link" target="_blank" rel="noopener">原圖</a>
+          <button class="icon-btn" type="button" id="closeLightbox" aria-label="關閉預覽">×</button>
+        </div>
+      </div>
+      <img id="lightboxImage" src="https://drive.google.com/thumbnail?id=1hJCdrkfV0KQ7WkP3I0DJkj3VgCPzUZA3&sz=w2000" alt="活動圖片大圖預覽">
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="wrap">
+      <span>工程資訊與空間管理 AI 實務專題演講整理</span>
+      <span>資料來源：content.md、Questionnaire_analysis.md、imglink.txt</span>
+    </div>
+  </footer>
+
+  <script>
+    const galleryImages = [
+      {
+        title: "活動圖片",
+        preview: "https://drive.google.com/thumbnail?id=1hJCdrkfV0KQ7WkP3I0DJkj3VgCPzUZA3&sz=w2000",
+        original: "https://drive.google.com/file/d/1hJCdrkfV0KQ7WkP3I0DJkj3VgCPzUZA3/view?usp=drive_link"
+      }
+    ];
+
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImage = document.getElementById("lightboxImage");
+    const lightboxTitle = document.getElementById("lightboxTitle");
+    const originalLink = document.getElementById("originalLink");
+    const closeLightbox = document.getElementById("closeLightbox");
+
+    function openLightbox(index) {
+      const item = galleryImages[index];
+      if (!item) return;
+      lightboxTitle.textContent = item.title;
+      lightboxImage.src = item.preview;
+      originalLink.href = item.original;
+      lightbox.classList.add("open");
+      closeLightbox.focus();
+    }
+
+    function closePreview() {
+      lightbox.classList.remove("open");
+    }
+
+    document.querySelectorAll(".gallery-item").forEach((item) => {
+      item.addEventListener("click", () => {
+        openLightbox(Number(item.dataset.index));
+      });
+    });
+
+    closeLightbox.addEventListener("click", closePreview);
+
+    lightbox.addEventListener("click", (event) => {
+      if (event.target === lightbox) closePreview();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && lightbox.classList.contains("open")) {
+        closePreview();
+      }
+    });
+  </script>
+</body>
+</html>

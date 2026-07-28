@@ -1,0 +1,1338 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Amazon Quick Hands-on Lab Series</title>
+  <style>
+    :root {
+      --ink: #071a44;
+      --text: #13233f;
+      --muted: #62708a;
+      --line: #dbe4f0;
+      --panel: #ffffff;
+      --soft: #f5f8fc;
+      --brand: #7c1dff;
+      --cyan: #b000ff;
+      --green: #00a67d;
+      --orange: #f59f00;
+      --pink: #ff1a9b;
+      --violet: #5b21d6;
+      --shadow: 0 18px 48px rgba(10, 30, 70, .12);
+      --radius: 8px;
+      --font-scale: 1;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: calc(16px * var(--font-scale));
+      line-height: 1.7;
+      background:
+        radial-gradient(circle at 78% 8%, rgba(255, 26, 155, .22), transparent 30%),
+        radial-gradient(circle at 20% 18%, rgba(124, 29, 255, .18), transparent 32%),
+        radial-gradient(circle at 64% 64%, rgba(176, 0, 255, .12), transparent 34%),
+        linear-gradient(135deg, #f4f0ff 0%, #f7ecff 45%, #eef3ff 100%);
+    }
+
+    a { color: inherit; }
+
+    button, input { font: inherit; }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      grid-template-rows: 52px minmax(0, 1fr);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      background: rgba(255, 255, 255, .9);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 22px;
+      border-right: 1px solid var(--line);
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius);
+      color: #fff;
+      font-weight: 900;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .24), transparent 36%),
+        linear-gradient(135deg, #5b21d6 0%, #a000ff 42%, #ff1a9b 100%);
+    }
+
+    .brand-title {
+      min-width: 0;
+      line-height: 1.18;
+      font-weight: 900;
+      color: var(--ink);
+    }
+
+    .brand-title small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 0 18px;
+    }
+
+    .search {
+      width: min(560px, 52vw);
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 9px 12px;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .tool-btn,
+    .btn {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--ink);
+      background: #fff;
+      text-decoration: none;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn.primary {
+      color: #fff;
+      border-color: var(--brand);
+      background: var(--brand);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 52px;
+      height: calc(100vh - 52px);
+      padding: 28px 18px;
+      background: rgba(255, 255, 255, .82);
+      border-right: 1px solid var(--line);
+      overflow: auto;
+    }
+
+    .sidebar h2 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--ink);
+    }
+
+    .sidebar p {
+      margin: 6px 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .toc {
+      display: grid;
+      gap: 8px;
+    }
+
+    .toc a {
+      display: block;
+      padding: 12px;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      color: var(--ink);
+      text-decoration: none;
+      background: transparent;
+    }
+
+    .toc a:hover,
+    .toc a.active {
+      border-color: var(--line);
+      background: #f1f6fc;
+    }
+
+    .toc span {
+      display: block;
+      color: #59708f;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+
+    .toc strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 15px;
+    }
+
+    .hint {
+      margin-top: 24px;
+      padding: 14px;
+      border: 1px solid rgba(245, 159, 0, .35);
+      border-radius: var(--radius);
+      color: #8a5200;
+      background: #fff8e6;
+      font-size: 13px;
+    }
+
+    main {
+      min-width: 0;
+      padding: 30px 0 60px;
+    }
+
+    .content {
+      width: min(1040px, calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    .hero-card {
+      position: relative;
+      padding: 28px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .9);
+      border: 1px solid rgba(255, 255, 255, .72);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: linear-gradient(90deg, #5b21d6, #8b00ff, #c000ff, #ff1a9b);
+    }
+
+    .breadcrumb {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      color: #7611c9;
+      background: #f5e8ff;
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(36px, 5vw, 56px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 890px;
+      margin: 18px 0 0;
+      color: var(--text);
+      font-size: 18px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .metric {
+      min-height: 92px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .metric strong {
+      display: block;
+      color: var(--green);
+      font-size: 30px;
+      line-height: 1.1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    section {
+      scroll-margin-top: 70px;
+      margin-top: 38px;
+    }
+
+    .section-head {
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 28px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      max-width: 820px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: 0 8px 26px rgba(10, 30, 70, .06);
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      color: #9a00d4;
+      font-size: 20px;
+      line-height: 1.35;
+    }
+
+    .card p,
+    .card li {
+      color: var(--text);
+    }
+
+    .card p { margin: 0; }
+
+    .card ul,
+    .card ol {
+      margin: 10px 0 0;
+      padding-left: 22px;
+    }
+
+    .label {
+      display: inline-flex;
+      margin-bottom: 14px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      color: var(--ink);
+      background: linear-gradient(90deg, #eee7ff, #ffe5f5);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .feature-map {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .feature-node {
+      min-height: 112px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .feature-node strong {
+      display: block;
+      color: var(--ink);
+      font-size: 17px;
+    }
+
+    .feature-node span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .manual {
+      display: grid;
+      gap: 14px;
+    }
+
+    .lab {
+      display: grid;
+      grid-template-columns: 170px minmax(0, 1fr);
+      gap: 18px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .92);
+    }
+
+    .lab-kicker {
+      display: grid;
+      place-items: center;
+      min-height: 118px;
+      border-radius: var(--radius);
+      color: #fff;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .18), transparent 40%),
+        linear-gradient(135deg, #5b21d6, #a000ff 52%, #ff1a9b);
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .lab-kicker span {
+      display: block;
+      font-size: 34px;
+      line-height: 1;
+    }
+
+    .lab h3 {
+      margin: 0 0 6px;
+      color: var(--ink);
+      font-size: 22px;
+    }
+
+    .lab p { margin: 0 0 10px; }
+
+    .steps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .step-chip {
+      padding: 6px 9px;
+      border-radius: 999px;
+      color: #174ea6;
+      background: #edf5ff;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    pre {
+      margin: 12px 0 0;
+      padding: 14px;
+      border-radius: var(--radius);
+      color: #07224a;
+      background: #f6f8fb;
+      border: 1px solid var(--line);
+      overflow: auto;
+      white-space: pre-wrap;
+      font-size: 14px;
+    }
+
+    .achievement-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+
+    .achievement-table th,
+    .achievement-table td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .achievement-table th {
+      color: var(--muted);
+      background: #f7faff;
+      font-size: 13px;
+    }
+
+    .achievement-table tr:last-child td { border-bottom: 0; }
+
+    .company-badge {
+      display: inline-flex;
+      padding: 4px 8px;
+      border-radius: 6px;
+      color: #174ea6;
+      background: #edf5ff;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .score-bars { display: grid; gap: 12px; }
+
+    .survey-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .survey-card {
+      padding: 22px;
+      border: 1px solid rgba(124, 29, 255, .16);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(124, 29, 255, .06), rgba(255, 26, 155, .05)),
+        #fff;
+      box-shadow: 0 12px 34px rgba(91, 33, 214, .09);
+    }
+
+    .survey-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .survey-top h3 {
+      margin: 0;
+      color: var(--ink);
+      font-size: 23px;
+    }
+
+    .survey-top p {
+      margin: 6px 0 0;
+      color: var(--muted);
+    }
+
+    .survey-date {
+      flex: 0 0 auto;
+      padding: 7px 10px;
+      border-radius: 999px;
+      color: #fff;
+      background: linear-gradient(135deg, #5b21d6, #ff1a9b);
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .survey-facts {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0 0 16px;
+    }
+
+    .fact {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .86);
+    }
+
+    .fact strong {
+      display: block;
+      color: #8b00ff;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    .fact span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .survey-body {
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+      gap: 16px;
+    }
+
+    .survey-body h4 {
+      margin: 0 0 8px;
+      color: #9a00d4;
+      font-size: 16px;
+    }
+
+    .survey-body p,
+    .survey-body li {
+      color: var(--text);
+    }
+
+    .survey-body ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    .score-row {
+      display: grid;
+      grid-template-columns: minmax(150px, 230px) minmax(0, 1fr) 54px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .bar {
+      height: 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #dce4ee;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--brand), var(--green));
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .gallery-item {
+      border: 0;
+      padding: 0;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: #dce4ee;
+      cursor: pointer;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      transition: transform .2s ease;
+    }
+
+    .gallery-item:hover img { transform: scale(1.035); }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      padding: 24px;
+      background: rgba(7, 16, 35, .86);
+    }
+
+    .lightbox.open {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 14px;
+    }
+
+    .lightbox-top,
+    .lightbox-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      color: #fff;
+    }
+
+    .lightbox-stage {
+      min-height: 0;
+      display: grid;
+      place-items: center;
+    }
+
+    .lightbox img {
+      max-width: min(100%, 1120px);
+      max-height: 100%;
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(255, 255, 255, .35);
+      border-radius: var(--radius);
+      color: #fff;
+      background: rgba(255, 255, 255, .12);
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    .hidden-by-search { display: none !important; }
+
+    footer {
+      margin-top: 50px;
+      padding: 26px 0;
+      color: var(--muted);
+      border-top: 1px solid rgba(10, 30, 70, .08);
+    }
+
+    @media (max-width: 1100px) {
+      .app-shell {
+        display: block;
+      }
+
+      .topbar {
+        grid-template-columns: 1fr;
+        position: sticky;
+      }
+
+      .brand {
+        min-height: 52px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .toolbar {
+        min-height: 52px;
+        justify-content: flex-start;
+        overflow-x: auto;
+      }
+
+      .search { width: min(520px, 68vw); }
+
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .toc {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      main { padding-top: 24px; }
+    }
+
+    @media (max-width: 840px) {
+      .metrics,
+      .grid.two,
+      .grid.three,
+      .grid.four,
+      .gallery,
+      .feature-map {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .lab {
+        grid-template-columns: 1fr;
+      }
+
+      .survey-top,
+      .survey-body {
+        grid-template-columns: 1fr;
+      }
+
+      .survey-facts {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .achievement-table,
+      .achievement-table tbody,
+      .achievement-table tr,
+      .achievement-table td {
+        display: block;
+        width: 100%;
+      }
+
+      .achievement-table thead { display: none; }
+
+      .achievement-table tr {
+        padding: 14px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .achievement-table td {
+        padding: 5px 0;
+        border: 0;
+      }
+
+      .achievement-table td::before {
+        content: attr(data-label);
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 900;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .content { width: min(100% - 24px, 1040px); }
+      .hero-card { padding: 22px; }
+      .toc,
+      .metrics,
+      .grid.two,
+      .grid.three,
+      .grid.four,
+      .gallery,
+      .feature-map {
+        grid-template-columns: 1fr;
+      }
+      .toolbar { flex-wrap: wrap; }
+      .search { width: 100%; }
+      .score-row { grid-template-columns: 1fr; }
+      .survey-facts { grid-template-columns: 1fr; }
+      .survey-date { justify-self: start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">AI</div>
+        <div class="brand-title">
+          Amazon Quick Hands-on Lab Series
+          <small>全方位 AI 助手實戰工作坊</small>
+        </div>
+      </div>
+      <div class="toolbar">
+        <input id="pageSearch" class="search" type="search" placeholder="搜尋關鍵字（如：Space、Agent、Research、成果）">
+        <button class="tool-btn" type="button" data-font="1">A</button>
+        <button class="tool-btn" type="button" data-font="1.08">A+</button>
+        <button class="tool-btn" type="button" data-font="1.16">A++</button>
+      </div>
+    </header>
+
+    <aside class="sidebar">
+      <h2>課程大綱目錄</h2>
+      <p>點擊章節快速切換；上方搜尋可篩選頁面內容。</p>
+      <nav class="toc" aria-label="課程大綱">
+        <a href="#home" class="active"><span>Section 01</span><strong>課程總覽</strong></a>
+        <a href="#route"><span>Section 02</span><strong>核心學習脈絡</strong></a>
+        <a href="#features"><span>Section 03</span><strong>Quick 功能地圖</strong></a>
+        <a href="#ai"><span>Section 04</span><strong>AI 與 Prompt</strong></a>
+        <a href="#labs"><span>Section 05</span><strong>四大實作 Lab</strong></a>
+        <a href="#achievements"><span>Section 06</span><strong>學員成果</strong></a>
+        <a href="#feedback"><span>Section 07</span><strong>問卷分析</strong></a>
+        <a href="#gallery"><span>Section 08</span><strong>活動照片</strong></a>
+      </nav>
+      <div class="hint"><strong>小提示</strong><br>本頁已把 content.md 拆成展示型章節，適合課後回顧、內部分享與展示學員 Research 成果。</div>
+    </aside>
+
+    <main>
+      <div class="content">
+        <section id="home" class="search-block" data-search="課程總覽 Amazon Quick Hands-on Lab Series 全方位 AI 助手實戰工作坊">
+          <div class="hero-card">
+            <div class="breadcrumb">首頁 / <span class="pill">Amazon Quick 實作 Workshop</span></div>
+            <h1>Amazon Quick 實戰工作坊成果入口</h1>
+            <p class="lead">本頁整合 `content.md` 課程整理、學員 Research 報告成果、問卷摘要、活動照片與影片預留區。課程從企業知識庫建置、AI Agent 設計、應用程式生成、研究報告產出，到 Flow 自動化流程，展示 Amazon Quick 從資料整合到標準化執行的完整路徑。</p>
+            <div class="metrics">
+              <div class="metric"><strong>66</strong><span>張課程簡報投影片</span></div>
+              <div class="metric"><strong>9</strong><span>段字幕與錄影內容</span></div>
+              <div class="metric"><strong>19</strong><span>名有紀錄參與學員</span></div>
+              <div class="metric"><strong>9.16</strong><span>整體滿意度平均分數</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="route" class="search-block" data-search="課程主軸 學習路徑 Space Apps Chat Agent Research Flow">
+          <div class="section-head">
+            <h2>核心學習脈絡</h2>
+            <p>課程建議依序完成 Lab，讓學員逐步掌握從資料整理、AI 協作到流程自動化的完整能力。</p>
+          </div>
+          <div class="grid two">
+            <article class="card">
+              <span class="label">思維突破 01</span>
+              <h3>從個人問答到企業資料共享</h3>
+              <p>Amazon Quick 的角色不只是 ChatGPT 類型問答工具，而是更偏向企業內部資料共享、知識庫治理、Agent 分享與流程標準化的平台。</p>
+            </article>
+            <article class="card">
+              <span class="label">資料邏輯 02</span>
+              <h3>Space 是 AI 的資料基礎</h3>
+              <p>先把文件、資料表或內部知識集中到 Space，AI 才能用企業上下文回答問題，並讓 Apps、Agent、Flow 重複使用同一份知識資產。</p>
+            </article>
+            <article class="card">
+              <span class="label">工具選擇 03</span>
+              <h3>Research 用於正式分析</h3>
+              <p>一般 Chat 適合即時問答；需要多來源蒐集、國外案例比較、引用來源與正式報告時，應優先使用 Research。</p>
+            </article>
+            <article class="card">
+              <span class="label">流程沉澱 04</span>
+              <h3>Flow 讓 AI 應用可重複</h3>
+              <p>Flow 把輸入、研究、Agent 評估與輸出整理串成固定步驟，讓 AI 應用從一次性問答變成較穩定、可控制、可分享的作業流程。</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="features" class="search-block" data-search="Chat Agent Spaces Flows Apps Research Automate 功能地圖">
+          <div class="section-head">
+            <h2>Amazon Quick 功能地圖</h2>
+            <p>content.md 將 Quick 核心功能整理成六個模組：Chat Agent、Spaces、Flows、Apps、Research、Automate。</p>
+          </div>
+          <div class="feature-map">
+            <div class="feature-node"><strong>Chat Agent</strong><span>對話式 AI Agent，可連接 Space 與外部系統資料。</span></div>
+            <div class="feature-node"><strong>Spaces</strong><span>企業知識空間，支援檔案、資料集、儀表板與知識庫。</span></div>
+            <div class="feature-node"><strong>Flows</strong><span>無程式碼多步驟流程，適合重複任務與標準化作業。</span></div>
+            <div class="feature-node"><strong>Apps</strong><span>用自然語言建立互動式網頁應用程式。</span></div>
+            <div class="feature-node"><strong>Research</strong><span>多來源深度研究，產出具引用追溯性的分析報告。</span></div>
+            <div class="feature-node"><strong>Automate</strong><span>進階自動化，適合高量、長時間、跨系統流程。</span></div>
+          </div>
+          <div class="grid three" style="margin-top:16px">
+            <article class="card"><h3>可整合來源</h3><p>PDF、Word、PPT、TXT、CSV、儀表板、資料集、S3、Web Crawler、Google Drive、Teams、Slack、Notion 等。</p></article>
+            <article class="card"><h3>常見應用情境</h3><p>RFP 回覆、SOW 審查、費用分析、銷售簡報準備、行銷內容產出、競爭分析與多資料源交叉比對。</p></article>
+            <article class="card"><h3>權限與治理</h3><p>課程提到帳戶、使用者、訂閱授權、索引容量、群組與許可，都是導入 Quick 時需要先確認的管理項目。</p></article>
+          </div>
+        </section>
+
+        <section id="ai" class="search-block" data-search="AI Prompt 迷思 明確角色 上下文 分步驟 範例 驗證 迭代">
+          <div class="section-head">
+            <h2>AI 使用觀念與 Prompt 設計</h2>
+            <p>課程先建立 AI 協作基本觀念，避免把 AI 當成一次就會產出完美答案的工具。</p>
+          </div>
+          <div class="grid three">
+            <article class="card"><span class="label">迷思 01</span><h3>AI 什麼都知道</h3><p>AI 有知識截止日期，也可能產生幻覺，因此正式文件、政策分析與數據比較都需要人工驗證。</p></article>
+            <article class="card"><span class="label">迷思 02</span><h3>問越長越好</h3><p>冗長不代表有效。清楚、簡潔、有結構的指令通常比大量但鬆散的描述更能讓 AI 抓到重點。</p></article>
+            <article class="card"><span class="label">迷思 03</span><h3>一次就完美</h3><p>多輪對話、逐步修正與持續追問才是最佳策略，應把 AI 當作協作夥伴。</p></article>
+          </div>
+          <div class="grid two" style="margin-top:16px">
+            <article class="card">
+              <h3>有效使用 AI 的五個建議</h3>
+              <ol>
+                <li>明確角色與目標。</li>
+                <li>提供背景、限制條件與參考資料。</li>
+                <li>把複雜任務拆成小步驟。</li>
+                <li>提供範例格式或期待輸出。</li>
+                <li>驗證答案並持續迭代。</li>
+              </ol>
+            </article>
+            <article class="card">
+              <h3>Prompt 實戰對比</h3>
+              <p>不佳 Prompt：幫我寫報告、分析一下數據、做一份簡報。</p>
+              <pre>我是行銷經理，需要一份給高層的 Q3 業績摘要，包含：營收成長率、客戶數變化、下季展望。
+請用條列式，控制在 300 字以內。</pre>
+            </article>
+          </div>
+        </section>
+
+        <section id="labs" class="search-block" data-search="Lab 1 Spaces Apps 午餐救星 Lab 2 Chat Agent 旅遊規劃 Lab 3 Research Lab 4 Flows Trigger">
+          <div class="section-head">
+            <h2>四大實作 Lab</h2>
+            <p>把 content.md 的操作章節整理成課堂展示手冊，可直接用來說明每個 Lab 的目標、素材、步驟與產出。</p>
+          </div>
+          <div class="manual">
+            <article class="lab">
+              <div class="lab-kicker">Lab <span>01</span></div>
+              <div>
+                <h3>Spaces + Apps 午餐轉盤</h3>
+                <p>建立「午餐救星」Space，上傳 `午餐列表_範例.xlsx`，再用 Apps 產生隨機午餐轉盤。重點是理解知識庫如何讓 AI 使用內部資料。</p>
+                <div class="steps">
+                  <span class="step-chip">建立 Space</span><span class="step-chip">上傳 Excel</span><span class="step-chip">驗證午餐選項</span><span class="step-chip">建立 Apps</span><span class="step-chip">測試轉盤</span>
+                </div>
+                <pre>利用空間中的「午餐救星」設計隨機轉盤，按下開始後，動畫呈現旋轉後停止並選擇一間餐廳，提供餐廳詳細資訊。</pre>
+              </div>
+            </article>
+            <article class="lab">
+              <div class="lab-kicker">Lab <span>02</span></div>
+              <div>
+                <h3>旅遊規劃 Chat Agent</h3>
+                <p>建立旅遊規劃助理，練習定義 Agent 的角色、核心職責、互動流程、輸出格式與限制條件。</p>
+                <div class="steps">
+                  <span class="step-chip">建立 Chat Agent</span><span class="step-chip">產生 Prompt</span><span class="step-chip">改進中文格式</span><span class="step-chip">預覽測試</span><span class="step-chip">啟動分享</span>
+                </div>
+                <pre>你是一位專業的旅遊規劃助理，擁有豐富的全球旅遊知識，擅長根據旅客的預算、偏好和時間限制，提供個人化的旅遊建議和行程規劃。</pre>
+              </div>
+            </article>
+            <article class="lab">
+              <div class="lab-kicker">Lab <span>03</span></div>
+              <div>
+                <h3>Research 港務議題研究</h3>
+                <p>使用 Research 針對港務或業務議題進行多來源研究，產出具來源追溯性的分析報告。課程範例為營建剩餘土石與填海造地國外案例比較。</p>
+                <div class="steps">
+                  <span class="step-chip">新增研究</span><span class="step-chip">輸入主題</span><span class="step-chip">檢閱計畫</span><span class="step-chip">中文修訂</span><span class="step-chip">下載 PDF/Word</span>
+                </div>
+                <pre>針對營建剩餘土石主題，搜尋美國、日本、歐盟等先進國家的實際推動案例，比較各國在策略規劃、執行方式及成效上的差異，並分析對台灣推動填海造地的啟示與建議。</pre>
+              </div>
+            </article>
+            <article class="lab">
+              <div class="lab-kicker">Lab <span>04</span></div>
+              <div>
+                <h3>Flows 多步驟自動化流程</h3>
+                <p>將輸入、Research、旅伴 AI 評估與最終建議串成流程，可加入特殊要求，也可設定 Schedule、收信或 Quick 事件觸發。</p>
+                <div class="steps">
+                  <span class="step-chip">建立流程</span><span class="step-chip">輸入條件</span><span class="step-chip">Research 節點</span><span class="step-chip">Agent 評估</span><span class="step-chip">Create Trigger</span>
+                </div>
+                <pre>輸入地點、遊玩時間、人數，使用研究行程規劃，並由旅伴 AI 進行評估，最後產出旅遊建議。</pre>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="search-block" data-search="瀏覽器擴充功能 Office 簡報 延伸功能 網頁資料 AI Agent 互動">
+          <div class="section-head">
+            <h2>延伸功能展示</h2>
+            <p>課程也示範瀏覽器與 Office 相關延伸功能，讓 Quick 可以在現有工作情境中輔助資料整理與內容產出。</p>
+          </div>
+          <div class="grid two">
+            <article class="card">
+              <h3>瀏覽器擴充功能</h3>
+              <p>可讀取目前網頁內容，並與 Space 中的資料比對。例如看到外部餐廳文章後，詢問該餐廳是否存在於「午餐救星」知識庫。</p>
+            </article>
+            <article class="card">
+              <h3>Office / 簡報產出</h3>
+              <p>Quick 可協助依公司概況、營運數據、核心業務、未來展望等架構產生簡報，產出物件通常可編輯，但仍建議人工微調。</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="achievements" class="search-block" data-search="學員成果 PDF Google Drive 臺中分公司 基隆分公司 總公司 棧埠處 維管處 會計處">
+          <div class="section-head">
+            <h2>學員成果 PDF 展示</h2>
+          </div>
+          <table class="achievement-table">
+            <thead>
+              <tr>
+                <th>公司</th>
+                <th>單位</th>
+                <th>同仁</th>
+                <th>成果檔案</th>
+                <th>連結</th>
+              </tr>
+            </thead>
+            <tbody id="achievementBody"></tbody>
+          </table>
+        </section>
+
+        <section id="feedback" class="search-block" data-search="問卷分析 滿意度 課程與講師專業度 學員互動 行政環境 權限 20260602 20260706 20260721 三梯次">
+          <div class="section-head">
+            <h2>三梯次問卷分析摘要</h2>
+            <p>本頁整合 2026/6/2、2026/7/6、2026/7/21 三份參訓及問卷結果，分別呈現每梯次的參與輪廓、量化評分、學員回饋與後續改善方向。</p>
+          </div>
+          <div class="survey-grid">
+            <article class="survey-card">
+              <div class="survey-top">
+                <div>
+                  <h3>第一梯次：資訊處為主的導入場</h3>
+                  <p>課程時間為 2026/6/2（二）13:30-17:00，資料顯示本梯次以資訊處同仁為主，適合作為 AWS Quick 功能導入與權限盤點的早期觀察樣本。</p>
+                </div>
+                <div class="survey-date">2026/06/02</div>
+              </div>
+              <div class="survey-facts">
+                <div class="fact"><strong>19</strong><span>有紀錄參與學員</span></div>
+                <div class="fact"><strong>5</strong><span>公司別涵蓋數</span></div>
+                <div class="fact"><strong>9.16</strong><span>整體滿意度</span></div>
+                <div class="fact"><strong>9.53</strong><span>行政環境與設備</span></div>
+              </div>
+              <div class="survey-body">
+                <div>
+                  <h4>量化表現</h4>
+                  <div class="score-bars">
+                    <div class="score-row"><span>課程與講師專業度</span><div class="bar"><span style="width:93.2%"></span></div><strong>9.32</strong></div>
+                    <div class="score-row"><span>課程安排相關指標</span><div class="bar"><span style="width:94.2%"></span></div><strong>9.42</strong></div>
+                    <div class="score-row"><span>學員互動與實質幫助</span><div class="bar"><span style="width:90.1%"></span></div><strong>9.01</strong></div>
+                    <div class="score-row"><span>行政環境與設備</span><div class="bar"><span style="width:95.3%"></span></div><strong>9.53</strong></div>
+                  </div>
+                </div>
+                <div>
+                  <h4>回饋重點與改善方向</h4>
+                  <ul>
+                    <li>正面回饋集中在主題契合實務、AWS Quick 實用性高，以及學員能更清楚理解各功能使用情境。</li>
+                    <li>學員對行政後勤與現場引導滿意，下午茶與課堂支援也被列為正面體驗。</li>
+                    <li>核心痛點是帳號權限不一致，部分一般使用者無法完整實作，影響動手操作的連續性。</li>
+                    <li>建議後續課前先確認權限、必要時提供完整測試帳號，並依學員權限角色分流安排內容。</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="survey-card">
+              <div class="survey-top">
+                <div>
+                  <h3>第二梯次：跨單位擴散與 Flow 亮點場</h3>
+                  <p>2026/7/6（一）場次共 20 名不重複學員，涵蓋總公司與四個分公司，參與單位明顯擴大，回饋中開始凸顯 Flow、Research 與避免 AI 幻覺等功能價值。</p>
+                </div>
+                <div class="survey-date">2026/07/06</div>
+              </div>
+              <div class="survey-facts">
+                <div class="fact"><strong>20</strong><span>有效問卷 / 不重複學員</span></div>
+                <div class="fact"><strong>12</strong><span>單位別涵蓋數</span></div>
+                <div class="fact"><strong>9.53</strong><span>講師時間掌控</span></div>
+                <div class="fact"><strong>9.53</strong><span>助教服務態度</span></div>
+              </div>
+              <div class="survey-body">
+                <div>
+                  <h4>量化表現</h4>
+                  <div class="score-bars">
+                    <div class="score-row"><span>講師專業知識</span><div class="bar"><span style="width:92.4%"></span></div><strong>9.24</strong></div>
+                    <div class="score-row"><span>講師表達技巧</span><div class="bar"><span style="width:92.9%"></span></div><strong>9.29</strong></div>
+                    <div class="score-row"><span>課程時數安排</span><div class="bar"><span style="width:94.1%"></span></div><strong>9.41</strong></div>
+                    <div class="score-row"><span>講師與學員互動</span><div class="bar"><span style="width:93.5%"></span></div><strong>9.35</strong></div>
+                    <div class="score-row"><span>課程整體滿意度</span><div class="bar"><span style="width:92.4%"></span></div><strong>9.24</strong></div>
+                  </div>
+                </div>
+                <div>
+                  <h4>回饋重點與改善方向</h4>
+                  <ul>
+                    <li>學員認為 AWS Quick 功能多元，尤其肯定 Flow 可建立應用程式並跑流程，具備高度實用性。</li>
+                    <li>Research 與流程功能被認為能處理特定痛點，例如降低 AI 幻覺、協助整理較完整的研究成果。</li>
+                    <li>挑戰包含工具上手不易、研究執行時間較長，以及目前難以限制資料數量範圍或自訂研究格式。</li>
+                    <li>未來可增加 Quick 進階課程，讓學員有更多時間練習自己的業務情境，降低「點子不多」與操作不熟的門檻。</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="survey-card">
+              <div class="survey-top">
+                <div>
+                  <h3>第三梯次：高滿意度與進階需求場</h3>
+                  <p>2026/7/21（二）場次共有 35 人簽到，34 位完成簽退與問卷。總公司與四大分公司皆有參與，且業務、會計、職安、港務、人事等多元單位加入，顯示 AI 工具需求已從資訊單位擴散到業務與管理單位。</p>
+                </div>
+                <div class="survey-date">2026/07/21</div>
+              </div>
+              <div class="survey-facts">
+                <div class="fact"><strong>35</strong><span>簽到參與人數</span></div>
+                <div class="fact"><strong>34</strong><span>完成問卷人數</span></div>
+                <div class="fact"><strong>16</strong><span>單位別涵蓋數</span></div>
+                <div class="fact"><strong>9.82</strong><span>整體滿意度 / 繼續辦理</span></div>
+              </div>
+              <div class="survey-body">
+                <div>
+                  <h4>量化表現</h4>
+                  <div class="score-bars">
+                    <div class="score-row"><span>課程與講師專業度</span><div class="bar"><span style="width:97.8%"></span></div><strong>9.78</strong></div>
+                    <div class="score-row"><span>課程安排與時間掌控</span><div class="bar"><span style="width:97.5%"></span></div><strong>9.75</strong></div>
+                    <div class="score-row"><span>學員互動與實質幫助</span><div class="bar"><span style="width:98.1%"></span></div><strong>9.81</strong></div>
+                    <div class="score-row"><span>行政環境與設備</span><div class="bar"><span style="width:99.1%"></span></div><strong>9.91</strong></div>
+                    <div class="score-row"><span>對我有幫助</span><div class="bar"><span style="width:98.5%"></span></div><strong>9.85</strong></div>
+                  </div>
+                </div>
+                <div>
+                  <h4>回饋重點與改善方向</h4>
+                  <ul>
+                    <li>學員對 AWS Quick 功能感到驚豔，認為 Research、Flow、樣板化輸入、流程整合與自動化具備實務價值。</li>
+                    <li>講師教學品質獲得高度肯定，常見回饋包含講解清楚、研究分析詳細、流程規劃清楚。</li>
+                    <li>學員明確表示希望多辦理此類課程，代表後續導入與推廣有足夠需求基礎。</li>
+                    <li>主要挑戰是課程時間稍嫌不足、進階功能仍需更多測試機會，尤其 Flow 的執行效果需要帶入實際業務情境反覆演練。</li>
+                    <li>建議未來可改為全天工作坊，或開設進階實作班，聚焦 Flow 設計、Research 報告產製與部門案例演練。</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <h3>跨梯次觀察</h3>
+              <p>三梯次從 19 人、20 人到 35 人，參與規模與單位多樣性逐步提高；同時整體滿意度也從 9.16 提升到 9.82，顯示課程內容與操作設計逐步貼近學員需求。</p>
+            </article>
+            <article class="card">
+              <h3>共同亮點</h3>
+              <p>三份問卷都反映 AWS Quick 的實用性被看見，尤其 Research 報告產製、Flow 流程化、自動化與內外部資料整合，是最容易被學員記住並聯想到工作應用的功能。</p>
+            </article>
+            <article class="card">
+              <h3>後續課程方向</h3>
+              <p>後續建議以權限準備、測試帳號、進階 Flow 演練、部門案例設計與全天型工作坊為主，讓學員不只看懂功能，也能把自己的業務資料轉成可重複使用的流程。</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="gallery" class="search-block" data-search="活動照片 img_link gallery 照片">
+          <div class="section-head">
+            <h2>活動照片</h2>
+
+          </div>
+          <div class="gallery" id="galleryGrid"></div>
+        </section>
+
+        <footer>資料來源：content.md、Questionnaire_analysis.md、Achievements.txt、img_link.csv、youtubelink.txt、課程簡報與字幕資料。</footer>
+      </div>
+    </main>
+  </div>
+
+  <div class="lightbox" id="lightbox" aria-modal="true" role="dialog" aria-label="活動照片預覽">
+    <div class="lightbox-top">
+      <strong id="lightboxTitle">活動照片</strong>
+      <button class="icon-btn" type="button" id="closeLightbox" aria-label="關閉">×</button>
+    </div>
+    <div class="lightbox-stage">
+      <img id="lightboxImage" src="" alt="活動照片預覽">
+    </div>
+    <div class="lightbox-bottom">
+      <button class="icon-btn" type="button" id="prevImage" aria-label="上一張">‹</button>
+      <a class="btn" id="openOriginal" href="#" target="_blank" rel="noopener">開啟原圖</a>
+      <button class="icon-btn" type="button" id="nextImage" aria-label="下一張">›</button>
+    </div>
+  </div>
+
+  <script>
+    const achievements = [
+      { company: "臺中分公司", unit: "棧埠處", person: "詹一峯", file: "中分棧埠處詹一峯.pdf", url: "https://drive.google.com/file/d/1iB7LphOIsKaJMY3w6kBRpQ0Y4cYnBgpr/view?usp=sharing" },
+      { company: "基隆分公司", unit: "維管處", person: "李恆毅", file: "基分_維管處_李恆毅.pdf", url: "https://drive.google.com/file/d/1W5bHQjLkh07YZzV8W8LidghnDO51Bqzz/view?usp=sharing" },
+      { company: "總公司", unit: "會計處", person: "盧品潔", file: "總公 司會計處盧品潔.pdf", url: "https://drive.google.com/file/d/13_uH8RwWq6CjNOrsvZ3r8W1DyDKHhtAm/view?usp=sharing" }
+    ];
+
+    const galleryImages = [
+      ["S__14385175_0.jpg", "1HbpFuzbD5ECKPBjk-AGh3ZE-6GFPGrNk"],
+      ["S__14385180_0.jpg", "1Hz9f0of4Ij9QNC7DG9noYDS_h8eq0lyK"],
+      ["S__14385178_0.jpg", "1cLOel9pGdWAgjCaV_VLhxqtFmUxk15Ra"],
+      ["S__14385179_0.jpg", "1eG1uZq3NT-OLw705ODwJLSMazEn5kSLe"],
+      ["S__14385181_0.jpg", "1fo-_osAoPoMUimGdUIXkRNnDR6Br4GRV"],
+      ["S__14385182_0.jpg", "1jU35abinR4lr7L5Rj2t_JkDiKj2Nxy_A"],
+      ["S__14385176_0.jpg", "1vbCkgwcvmit4QvZrUzwzXpOKN3t361in"],
+      ["S__14385177_0.jpg", "1xtUwJMgRnFbI__Y6ivuRPpH101D_oBLo"],
+      ["S__13680677_0.jpg", "13Z4QkCTMQ9wEWbhBf8ApcNH6CPTPWCfj"],
+      ["S__13680672_0.jpg", "13tHT48VQGOfkVSta-cFSBvaa2XGm8V8g"],
+      ["S__13680671_0.jpg", "14yn4lx82f9jPJeUJ6zSG6OL-z4M-rV_i"],
+      ["S__13680676_0.jpg", "1b6TN9xvou05T6gAvFrHedy9f5AgzXi6B"],
+      ["S__13680673_0.jpg", "1w9ocURr6P8PyyVLRmMY_4_LxEL-Xie0w"],
+      ["S__13680678_0.jpg", "1xGHxeIu8P7UWKLlyOYN0E1nyPRu49mRh"],
+      ["S__13680675_0.jpg", "1NrixSDH6-XBNj4M8djRHEFVzSgxtrs3T"],
+      ["S__13680674_0.jpg", "1ThD-nLujdH3_Hxy3YDC7ThZtm8rsWVOm"],
+      ["S__13680670_0.jpg", "1j4TBk4f3Dko5sCNYQkBw2ogHUMB3LwhL"]
+    ].map(([fileName, id]) => ({
+      fileName,
+      original: `https://drive.google.com/uc?export=view&id=${id}`,
+      small: `https://drive.google.com/thumbnail?id=${id}&sz=w1600`
+    }));
+
+    const pageSearch = document.querySelector("#pageSearch");
+    const blocks = Array.from(document.querySelectorAll(".search-block"));
+    const tocLinks = Array.from(document.querySelectorAll(".toc a"));
+    const achievementBody = document.querySelector("#achievementBody");
+    const galleryGrid = document.querySelector("#galleryGrid");
+    const lightbox = document.querySelector("#lightbox");
+    const lightboxImage = document.querySelector("#lightboxImage");
+    const lightboxTitle = document.querySelector("#lightboxTitle");
+    const openOriginal = document.querySelector("#openOriginal");
+    const closeLightbox = document.querySelector("#closeLightbox");
+    const prevImage = document.querySelector("#prevImage");
+    const nextImage = document.querySelector("#nextImage");
+    let activeImageIndex = 0;
+
+    function renderAchievements() {
+      achievementBody.innerHTML = achievements.map((item) => `
+        <tr>
+          <td data-label="公司"><span class="company-badge">${item.company}</span></td>
+          <td data-label="單位">${item.unit}</td>
+          <td data-label="同仁">${item.person}</td>
+          <td data-label="成果檔案">${item.file}</td>
+          <td data-label="連結"><a class="btn primary" href="${item.url}" target="_blank" rel="noopener">開啟 PDF</a></td>
+        </tr>
+      `).join("");
+    }
+
+    function renderGallery() {
+      galleryGrid.innerHTML = galleryImages.map((image, index) => `
+        <button class="gallery-item" type="button" data-index="${index}" aria-label="開啟活動照片 ${index + 1}">
+          <img src="${image.small}" alt="活動照片 ${index + 1}" loading="lazy" onerror="this.onerror=null; this.src='img/${image.fileName}'">
+        </button>
+      `).join("");
+
+      document.querySelectorAll(".gallery-item").forEach((button) => {
+        button.addEventListener("click", () => openLightbox(Number(button.dataset.index)));
+      });
+    }
+
+    function openLightbox(index) {
+      activeImageIndex = (index + galleryImages.length) % galleryImages.length;
+      const image = galleryImages[activeImageIndex];
+      lightboxImage.src = image.small;
+      lightboxImage.onerror = () => {
+        lightboxImage.onerror = null;
+        lightboxImage.src = `img/${image.fileName}`;
+      };
+      lightboxTitle.textContent = `活動照片 ${activeImageIndex + 1} / ${galleryImages.length}`;
+      openOriginal.href = image.original;
+      lightbox.classList.add("open");
+      closeLightbox.focus();
+    }
+
+    function closeLightboxDialog() {
+      lightbox.classList.remove("open");
+      lightboxImage.src = "";
+    }
+
+    function applyPageSearch() {
+      const query = pageSearch.value.trim().toLowerCase();
+      blocks.forEach((block) => {
+        const text = `${block.textContent} ${block.dataset.search || ""}`.toLowerCase();
+        block.classList.toggle("hidden-by-search", query.length > 0 && !text.includes(query));
+      });
+    }
+
+    function setActiveToc() {
+      const visibleBlocks = blocks.filter((block) => !block.classList.contains("hidden-by-search"));
+      const current = visibleBlocks.reduce((active, block) => {
+        const rect = block.getBoundingClientRect();
+        if (rect.top <= 110) return block;
+        return active;
+      }, visibleBlocks[0]);
+      tocLinks.forEach((link) => {
+        link.classList.toggle("active", current && link.getAttribute("href") === `#${current.id}`);
+      });
+    }
+
+    pageSearch.addEventListener("input", () => {
+      applyPageSearch();
+      setActiveToc();
+    });
+
+    document.querySelectorAll("[data-font]").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.documentElement.style.setProperty("--font-scale", button.dataset.font);
+      });
+    });
+
+    closeLightbox.addEventListener("click", closeLightboxDialog);
+    prevImage.addEventListener("click", () => openLightbox(activeImageIndex - 1));
+    nextImage.addEventListener("click", () => openLightbox(activeImageIndex + 1));
+    lightbox.addEventListener("click", (event) => {
+      if (event.target === lightbox) closeLightboxDialog();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (!lightbox.classList.contains("open")) return;
+      if (event.key === "Escape") closeLightboxDialog();
+      if (event.key === "ArrowLeft") openLightbox(activeImageIndex - 1);
+      if (event.key === "ArrowRight") openLightbox(activeImageIndex + 1);
+    });
+    document.addEventListener("scroll", setActiveToc, { passive: true });
+
+    renderAchievements();
+    renderGallery();
+    setActiveToc();
+  </script>
+</body>
+</html>

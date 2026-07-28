@@ -1,0 +1,436 @@
+:root {
+  color: #243033;
+  font-family: "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+  background: #162024;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+button {
+  border: 0;
+  font: inherit;
+}
+
+.screen {
+  min-height: 100vh;
+  width: 100vw;
+}
+
+.board-screen {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.12), transparent 18%),
+    linear-gradient(135deg, #253338, #101719);
+}
+
+.cork-board {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  min-height: 540px;
+  border: clamp(10px, 1.6vw, 22px) solid #5b351e;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.38), inset 0 0 0 3px rgba(255, 255, 255, 0.16);
+  background-color: #b8783e;
+  background-image: url("../content/home/background/魔法科技軟木塞背板_16x9.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+  will-change: transform, filter;
+}
+
+.board-header {
+  position: absolute;
+  left: 50%;
+  top: clamp(18px, 5vh, 58px);
+  width: min(92vw, 1280px);
+  color: #f9f1dd;
+  text-shadow: 0 3px 12px rgba(73, 31, 10, 0.5);
+  text-align: center;
+  transform: translateX(-50%);
+  z-index: 5;
+}
+
+.board-header p {
+  margin: 0 0 8px;
+  font-size: 0.88rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.board-header h1 {
+  margin: 0;
+  font-family: "Yu Gothic UI Semibold", "Yu Gothic", "Microsoft JhengHei UI", "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+  font-size: clamp(1.8rem, 4.3vw, 4.8rem);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.08;
+  white-space: nowrap;
+}
+
+.photo-card {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: clamp(290px, 34vw, 500px);
+  aspect-ratio: 4 / 3;
+  padding: 12px 12px 36px;
+  background: #faf6eb;
+  box-shadow: 0 14px 24px rgba(61, 30, 12, 0.34);
+  cursor: pointer;
+  transform-origin: 50% 18%;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  z-index: 4;
+}
+
+.photo-card:hover {
+  transform: translateY(-8px) rotate(var(--rotation));
+  box-shadow: 0 24px 34px rgba(61, 30, 12, 0.38);
+}
+
+.photo-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 1px solid rgba(69, 46, 30, 0.18);
+  pointer-events: none;
+}
+
+.photo-review {
+  --rotation: -5deg;
+  left: 6%;
+  bottom: 9%;
+  rotate: -5deg;
+}
+
+.photo-outlook {
+  --rotation: 4deg;
+  left: 39%;
+  top: 27%;
+  rotate: 4deg;
+}
+
+.photo-other {
+  --rotation: -2deg;
+  right: 6%;
+  bottom: 12%;
+  rotate: -2deg;
+}
+
+.pin {
+  position: absolute;
+  top: -30px;
+  width: 62px;
+  height: 62px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  filter: drop-shadow(0 8px 8px rgba(55, 17, 11, 0.32));
+  z-index: 2;
+}
+
+.photo-review .pin {
+  background-image: url("../content/home/photos/紅色圖釘.svg");
+}
+
+.photo-outlook .pin {
+  background-image: url("../content/home/photos/藍色圖釘.svg");
+}
+
+.photo-other .pin {
+  background-image: url("../content/home/photos/紫色圖釘.svg");
+}
+
+.speech-bubble {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 16px);
+  width: max-content;
+  max-width: min(300px, 76vw);
+  padding: 18px 26px;
+  border-radius: 14px;
+  background: #3a261c;
+  color: #fff4dc;
+  font-size: clamp(1.1rem, 1.8vw, 1.55rem);
+  font-weight: 700;
+  box-shadow: 0 16px 26px rgba(52, 25, 10, 0.34);
+  opacity: 0;
+  transform: translate(-50%, 8px);
+  transition: opacity 160ms ease, transform 160ms ease;
+  pointer-events: none;
+}
+
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  border: 10px solid transparent;
+  border-top-color: #3a261c;
+}
+
+.photo-dialog {
+  position: absolute;
+  top: 8%;
+  max-width: 34%;
+  padding: 10px 13px;
+  border-radius: 16px;
+  background: #fffdf5;
+  color: #263333;
+  font-size: clamp(.72rem, 1.15vw, 1rem);
+  font-weight: 800;
+  line-height: 1.35;
+  box-shadow: 0 10px 16px rgba(52, 25, 10, 0.22);
+  opacity: 0;
+  transform: translateY(8px) scale(.96);
+  transition: opacity 160ms ease, transform 160ms ease;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.photo-dialog::after {
+  content: "";
+  position: absolute;
+  bottom: -9px;
+  border: 9px solid transparent;
+  border-top-color: #fffdf5;
+}
+
+.dialog-review-left {
+  left: 3%;
+}
+
+.dialog-review-left::after {
+  left: 22px;
+}
+
+.dialog-review-right {
+  right: 3%;
+}
+
+.dialog-review-right::after {
+  right: 22px;
+}
+
+.photo-card:hover .speech-bubble,
+.photo-card:focus-visible .speech-bubble {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.photo-review:hover .photo-dialog,
+.photo-review:focus-visible .photo-dialog {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.book-screen {
+  display: none;
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(44, 31, 22, 0.28), transparent 18%, transparent 82%, rgba(44, 31, 22, 0.28)),
+    #75614c;
+}
+
+.book-toolbar {
+  position: absolute;
+  right: clamp(16px, 4vw, 46px);
+  bottom: clamp(16px, 4vw, 46px);
+  z-index: 8;
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(20, 24, 26, 0.62);
+  color: #fff9ec;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.28);
+}
+
+.icon-button,
+.nav-button {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  color: #213033;
+  background: #fff7e6;
+  box-shadow: 0 8px 18px rgba(35, 24, 17, 0.22);
+  cursor: pointer;
+}
+
+.icon-button svg,
+.nav-button svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-button:hover,
+.nav-button:hover:not(:disabled) {
+  background: #ffffff;
+}
+
+.nav-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.page-status {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+}
+
+.page-status span {
+  font-weight: 700;
+}
+
+.page-status strong {
+  font-size: 0.95rem;
+}
+
+.toolbar-spacer {
+  display: none;
+}
+
+.book-stage {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+}
+
+.album-viewer {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 0, rgba(255, 255, 255, 0.16), transparent 42%),
+    #0f1719;
+}
+
+.book-stage > .nav-button {
+  position: absolute;
+  top: 50%;
+  z-index: 9;
+  transform: translateY(-50%);
+}
+
+#prev-page {
+  left: clamp(12px, 2vw, 28px);
+}
+
+#next-page {
+  right: clamp(12px, 2vw, 28px);
+}
+
+.album-page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 18%),
+    #fff8e8;
+  overflow: hidden;
+}
+
+.album-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  box-shadow: inset 0 0 80px rgba(56, 38, 23, 0.12);
+  pointer-events: none;
+  z-index: 1;
+}
+
+iframe {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff8e8;
+  transform-origin: center center;
+}
+
+.blackout {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 760px) {
+  body {
+    overflow: hidden;
+  }
+
+  .cork-board {
+    min-height: 100vh;
+    height: 100vh;
+  }
+
+  .photo-card {
+    width: min(360px, 82vw);
+  }
+
+  .photo-review {
+    left: 10%;
+    top: 22%;
+    bottom: auto;
+  }
+
+  .photo-outlook {
+    left: auto;
+    right: 9%;
+    top: 47%;
+  }
+
+  .photo-other {
+    left: 15%;
+    right: auto;
+    bottom: 7%;
+  }
+
+  .book-stage {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .album-viewer {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+  }
+}

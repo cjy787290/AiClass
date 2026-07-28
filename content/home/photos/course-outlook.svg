@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="課程展望照片">
+  <rect width="800" height="600" fill="#cfdbe5"/>
+  <circle cx="635" cy="115" r="62" fill="#f7cd6b"/>
+  <path d="M0 430 160 300l130 98 126-155 178 190 90-78 116 105v140H0z" fill="#526e72"/>
+  <path d="M0 470 190 344l130 102 116-138 170 178 78-72 116 101v85H0z" fill="#7a9a85"/>
+  <path d="M180 165h360" stroke="#3d5358" stroke-width="28" stroke-linecap="round"/>
+  <path d="M260 230h280" stroke="#8e654b" stroke-width="24" stroke-linecap="round"/>
+  <path d="M330 294h210" stroke="#3f735d" stroke-width="22" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,17 @@
+{
+  "name": "cork-board-book-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "lucide": "^0.468.0",
+    "vite": "^5.4.11"
+  },
+  "devDependencies": {}
+}
