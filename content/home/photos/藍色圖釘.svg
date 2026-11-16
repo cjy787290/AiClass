@@ -21,10 +21,6 @@
   </defs>
 
   <g filter="url(#shadow)" stroke="#2A1730" stroke-width="14" stroke-linejoin="round" stroke-linecap="round">
-    <!-- metal needle -->
-    <path d="M270 330 L230 454" fill="none" stroke="url(#metal)" stroke-width="22"/>
-    <path d="M229 454 L218 488 L244 461 Z" fill="#4A4F5B" stroke="#2A1730" stroke-width="8"/>
-
     <!-- lower collar -->
     <path d="M164 278 C178 320 334 320 348 278 L321 245 H191 Z"
           fill="url(#rim)"/>

@@ -11,27 +11,32 @@
       <section id="board-screen" class="screen board-screen is-active" aria-label="課程布告欄">
         <div class="cork-board">
           <div class="board-header">
-            <h1>TIPC_AI教育訓練回憶錄</h1>
+            <h1><img class="board-title-image" src="./content/home/photos/115年度新人訓練.svg" alt="115年度新人訓練" /></h1>
+            <img class="board-title-pin" src="./content/home/photos/綠色圖釘.svg" alt="" aria-hidden="true" />
           </div>
 
-          <button class="photo-card photo-review" data-action="review" aria-label="開啟課程回顧">
+          <button class="photo-card photo-review" data-action="review" aria-label="文字魔法變簡報">
             <span class="pin"></span>
-            <img src="./content/home/photos/課程回顧.svg" alt="課程回顧照片" />
+            <img src="./content/home/photos/文字魔法變簡報.svg" alt="莉莉亞娜與鯊鯊用魔法將文字變成簡報" />
             <span class="photo-dialog dialog-review-left">大家都很努力學習喔！</span>
             <span class="photo-dialog dialog-review-right">我也是！</span>
-            <span class="speech-bubble">課程回顧</span>
+            <span class="speech-bubble">文字魔法變簡報</span>
           </button>
 
-          <button class="photo-card photo-outlook" data-action="outlook" aria-label="課程展望">
+          <button class="photo-card photo-outlook" data-action="outlook" aria-label="圖文玩出簡報力">
             <span class="pin"></span>
-            <img src="./content/home/photos/course-outlook.svg" alt="課程展望照片" />
-            <span class="speech-bubble">課程展望</span>
+            <img src="./content/home/photos/圖文玩出簡報力.svg" alt="圖文玩出簡報力" />
+            <span class="photo-dialog dialog-review-left">這次換我！</span>
+            <span class="photo-dialog dialog-review-right">加油唷！！</span>
+            <span class="speech-bubble">圖文玩出簡報力</span>
           </button>
 
-          <button class="photo-card photo-other" data-action="other" aria-label="其他選項">
+          <button class="photo-card photo-other" data-action="other" aria-label="實用工具百寶箱">
             <span class="pin"></span>
-            <img src="./content/home/photos/other-options.svg" alt="其他選項照片" />
-            <span class="speech-bubble">其他選項</span>
+            <img src="./content/home/photos/實用工具百寶箱.svg" alt="實用工具百寶箱" />
+            <span class="photo-dialog dialog-review-left">還有很多應用呢！</span>
+            <span class="photo-dialog dialog-other-center">啊拉拉拉！</span>
+            <span class="speech-bubble">實用工具百寶箱</span>
           </button>
         </div>
       </section>
@@ -45,35 +50,23 @@
             </svg>
           </button>
           <div class="page-status">
-            <span>課程回顧</span>
-            <strong id="page-counter">1 / 10</strong>
+            <span id="book-title">文字魔法變簡報</span>
           </div>
           <div class="toolbar-spacer"></div>
         </div>
 
         <main class="book-stage">
-          <button id="prev-page" class="nav-button" aria-label="上一頁" title="上一頁">
-            <svg aria-hidden="true" viewBox="0 0 24 24">
-              <path d="m15 18-6-6 6-6"></path>
-            </svg>
-          </button>
-
           <div class="album-viewer" aria-live="polite">
             <div class="album-page">
               <iframe id="page-frame" title="課程回顧頁面內容"></iframe>
             </div>
           </div>
 
-          <button id="next-page" class="nav-button" aria-label="下一頁" title="下一頁">
-            <svg aria-hidden="true" viewBox="0 0 24 24">
-              <path d="m9 18 6-6-6-6"></path>
-            </svg>
-          </button>
         </main>
       </section>
 
       <div id="blackout" class="blackout" aria-hidden="true"></div>
     </div>
-    <script src="./src/main.js"></script>
+    <script defer src="./src/main.js"></script>
   </body>
 </html>
