@@ -3,35 +3,18 @@
   const bookScreen = document.querySelector('#book-screen');
   const blackout = document.querySelector('#blackout');
   const corkBoard = document.querySelector('.cork-board');
-  const reviewCard = document.querySelector('[data-action="review"]');
+  const cards = document.querySelectorAll('.photo-card[data-action]');
   const backToBoard = document.querySelector('#back-to-board');
-  const prevButton = document.querySelector('#prev-page');
-  const nextButton = document.querySelector('#next-page');
-  const pageCounter = document.querySelector('#page-counter');
+  const bookTitle = document.querySelector('#book-title');
   const pageFrame = document.querySelector('#page-frame');
 
-  const totalPages = 10;
-  let currentPage = 1;
-  let isTurning = false;
+  let isTransitioning = false;
 
-  const pageSources = [
-    '20260519_Engineering_Information.html',
-    '20260519_Engineering_InformationD1-D3.html',
-    '20260605_informationSecurity.html',
-    '20260612_informationSecurityPart2.html',
-    '20260618_ImgCreate.html',
-    '20260706_AWS_Quick.html',
-    '20260717＆0720&0727_copilot.html',
-    'index.html',
-    'index.html',
-    'index.html',
-  ];
-
-  function pageUrl(pageNumber) {
-    const folderName = `page-${String(pageNumber).padStart(2, '0')}`;
-    const fileName = pageSources[pageNumber - 1];
-    return `./content/course-review/pages/${folderName}/${fileName}`;
-  }
+  const sections = {
+    review: { title: '文字魔法變簡報', folder: '文字魔法變簡報', entry: 'DEMO1-文字做投影片-精簡排版.html' },
+    outlook: { title: '圖文玩出簡報力', folder: '圖文玩出簡報力', entry: '圖文描述製作投影片_互動網頁.html' },
+    other: { title: '實用工具百寶箱', folder: '實用工具百寶箱' },
+  };
 
   function animate(element, keyframes, options) {
     element.animate(keyframes, {
@@ -54,64 +37,18 @@
     return new Promise((resolve) => window.setTimeout(resolve, duration));
   }
 
-  function setFrame(pageNumber) {
-    if (pageNumber < 1 || pageNumber > totalPages) {
-      pageFrame.removeAttribute('src');
-      pageFrame.classList.add('is-empty');
-      return;
-    }
-
-    const nextUrl = pageUrl(pageNumber);
-    if (pageFrame.getAttribute('src') !== nextUrl) {
-      pageFrame.src = nextUrl;
-    }
-    pageFrame.classList.remove('is-empty');
-  }
-
-  function renderPage() {
-    setFrame(currentPage);
-    pageCounter.textContent = `${currentPage} / ${totalPages}`;
-    prevButton.disabled = currentPage === 1 || isTurning;
-    nextButton.disabled = currentPage === totalPages || isTurning;
-  }
-
-  async function turnPage(direction) {
-    if (isTurning) return;
-
-    const nextPage = currentPage + direction;
-    if (nextPage < 1 || nextPage > totalPages) return;
-
-    isTurning = true;
-    renderPage();
-
-    await animate(
-      pageFrame,
-      [
-        { opacity: 1, transform: 'translateX(0) scale(1)' },
-        { opacity: 0, transform: `translateX(${direction > 0 ? -42 : 42}px) scale(.985)` },
-      ],
-      { duration: 220, easing: 'cubic-bezier(.4,0,.2,1)' },
-    );
-
-    currentPage = nextPage;
-    renderPage();
-
-    await animate(
-      pageFrame,
-      [
-        { opacity: 0, transform: `translateX(${direction > 0 ? 42 : -42}px) scale(.985)` },
-        { opacity: 1, transform: 'translateX(0) scale(1)' },
-      ],
-      { duration: 360, easing: 'cubic-bezier(.2,.8,.2,1)' },
-    );
-
-    pageFrame.removeAttribute('style');
-    isTurning = false;
-    renderPage();
-  }
-
-  async function enterBook() {
-    const rect = reviewCard.getBoundingClientRect();
+  async function enterBook(card) {
+    if (isTransitioning) return;
+    isTransitioning = true;
+    const currentSection = sections[card.dataset.action];
+    bookScreen.dataset.section = card.dataset.action;
+    const isSpiral = card.dataset.action === 'outlook';
+    const zoomDuration = isSpiral ? 1700 : 1350;
+    const fadeDuration = isSpiral ? 400 : 250;
+    bookTitle.textContent = ['review', 'outlook'].includes(card.dataset.action) ? '回首頁' : currentSection.title;
+    bookScreen.setAttribute('aria-label', `${currentSection.title}相簿`);
+    pageFrame.title = `${currentSection.title}頁面內容`;
+    const rect = card.getBoundingClientRect();
     const boardRect = corkBoard.getBoundingClientRect();
     const photoCenterX = rect.left + rect.width / 2;
     const photoCenterY = rect.top + rect.height / 2;
@@ -123,9 +60,13 @@
 
     corkBoard.style.transformOrigin = `${photoCenterX - boardRect.left}px ${photoCenterY - boardRect.top}px`;
 
-    const zoomAnimation = startAnimation(
-      corkBoard,
-      [
+    const zoomFrames = isSpiral
+      ? [
+        { filter: 'brightness(1)', transform: 'translate(0, 0) rotate(0deg) scale(1)' },
+        { filter: 'brightness(.9)', transform: `translate(${x * .35}px, ${y * .35}px) rotate(-12deg) scale(1.5)`, offset: .38 },
+        { filter: 'brightness(.72)', transform: `translate(${x}px, ${y}px) rotate(18deg) scale(${scale})` },
+      ]
+      : [
         {
           filter: 'brightness(1)',
           transform: 'translate(0, 0) scale(1)',
@@ -134,26 +75,31 @@
           filter: 'brightness(0.72)',
           transform: `translate(${x}px, ${y}px) scale(${scale})`,
         },
-      ],
-      { duration: 1350, easing: 'cubic-bezier(.7,0,.18,1)' },
+      ];
+    const zoomAnimation = startAnimation(
+      corkBoard,
+      zoomFrames,
+      { duration: zoomDuration, easing: 'cubic-bezier(.7,0,.18,1)' },
     );
-    await delay(1350);
+    await delay(zoomDuration);
 
-    await animate(blackout, [{ opacity: 0 }, { opacity: 1 }], { duration: 250 });
+    await animate(blackout, [{ opacity: 0 }, { opacity: 1 }], { duration: fadeDuration });
 
     boardScreen.style.display = 'none';
     bookScreen.style.display = 'grid';
     boardScreen.classList.remove('is-active');
     bookScreen.classList.add('is-active');
-    currentPage = 1;
-    renderPage();
+    pageFrame.src = `./content/${currentSection.folder}/pages/${currentSection.entry || 'index.html'}`;
     zoomAnimation.cancel();
     corkBoard.removeAttribute('style');
 
     await animate(blackout, [{ opacity: 1 }, { opacity: 0 }], { duration: 480 });
+    isTransitioning = false;
   }
 
   async function leaveBook() {
+    if (isTransitioning) return;
+    isTransitioning = true;
     await animate(blackout, [{ opacity: 0 }, { opacity: 1 }], { duration: 250 });
 
     bookScreen.style.display = 'none';
@@ -162,19 +108,13 @@
     boardScreen.classList.add('is-active');
 
     await animate(blackout, [{ opacity: 1 }, { opacity: 0 }], { duration: 350 });
+    isTransitioning = false;
   }
 
-  reviewCard.addEventListener('click', enterBook);
+  cards.forEach((card) => card.addEventListener('click', () => enterBook(card)));
   backToBoard.addEventListener('click', leaveBook);
-  prevButton.addEventListener('click', () => turnPage(-1));
-  nextButton.addEventListener('click', () => turnPage(1));
-
   document.addEventListener('keydown', (event) => {
     if (!bookScreen.classList.contains('is-active')) return;
-    if (event.key === 'ArrowLeft') turnPage(-1);
-    if (event.key === 'ArrowRight') turnPage(1);
     if (event.key === 'Escape') leaveBook();
   });
-
-  renderPage();
 })();
