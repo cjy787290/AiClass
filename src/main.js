@@ -13,7 +13,7 @@
   const sections = {
     review: { title: '文字魔法變簡報', folder: '文字魔法變簡報', entry: 'DEMO1-文字做投影片-精簡排版.html' },
     outlook: { title: '圖文玩出簡報力', folder: '圖文玩出簡報力', entry: '圖文描述製作投影片_互動網頁.html' },
-    other: { title: '實用工具百寶箱', folder: '實用工具百寶箱' },
+    other: { title: '創意應用分享', folder: '實用工具百寶箱', entry: '創意應用分享.html' },
   };
 
   function animate(element, keyframes, options) {
@@ -45,7 +45,7 @@
     const isSpiral = card.dataset.action === 'outlook';
     const zoomDuration = isSpiral ? 1700 : 1350;
     const fadeDuration = isSpiral ? 400 : 250;
-    bookTitle.textContent = ['review', 'outlook'].includes(card.dataset.action) ? '回首頁' : currentSection.title;
+    bookTitle.textContent = '回首頁';
     bookScreen.setAttribute('aria-label', `${currentSection.title}相簿`);
     pageFrame.title = `${currentSection.title}頁面內容`;
     const rect = card.getBoundingClientRect();

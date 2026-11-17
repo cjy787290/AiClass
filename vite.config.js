@@ -16,9 +16,6 @@ export default defineConfig({
         mkdirSync(destination, { recursive: true });
         cpSync(resolve(root, 'content', folder, 'pages'), destination, { recursive: true });
       }
-      const scripts = resolve(root, 'dist/src');
-      mkdirSync(scripts, { recursive: true });
-      cpSync(resolve(root, 'src/main.js'), resolve(scripts, 'main.js'));
     },
   }],
 });
