@@ -100,9 +100,16 @@ body{background:#f2f5f5;color:#253a4b}
 .bottom:has(.case1-download:not([hidden])),.bottom:has(.case2-download:not([hidden])){justify-content:space-between}
 .s2 .heading{white-space:nowrap;font-size:clamp(42px,5vw,85px)} .s2 .paper pre{margin-top:0}@media(max-width:700px){.s2 .heading{font-size:clamp(40px,10vw,64px)}}
 .s3 .heading{text-align:center}
-/* 為外層左下角的返回首頁按鈕保留空間。 */
-.download-group{margin-left:140px}
-@media(max-width:700px){.download-group{position:absolute;left:10px;bottom:calc(100% + 8px);margin-left:0}}
+.s3 .w7{font-size:clamp(48px,5.5vw,82px);color:#7296ab;opacity:.75}@media(max-width:700px){.s3 .w7{font-size:42px}}
+
+/* 保留左下角回首頁按鈕空間，避免遮住下載連結 */
+@media (min-width: 701px) {
+  .bottom:has(.download-group:not([hidden])) { padding-left: 175px; }
+}
+@media (max-width: 700px) {
+  .bottom:has(.download-group:not([hidden])) { height: 130px; align-items: flex-end; padding-bottom: 20px; }
+  .bottom .download-group:not([hidden]) { position: absolute; left: 10px; bottom: 77px; }
+}
 </style></head><body><main class="deck" id="deck" aria-label="簡報示範，共五頁"><section class="slide s1" aria-label="第一頁：情境"><div class="hero"><h1>情境</h1><p>1. 蒐集船舶黑名單資料並彙整成投影片</p><p>2. 教育訓練規劃</p></div></section><section class="slide s2" aria-label="第二頁：蒐集資料"><div class="content"><div class="intro"><h2 class="heading">蒐集資料</h2><div class="hint">現在你整理了這些資料<br>正式製作前先思考一下吧！</div></div><div class="case-papers"><section class="case-area"><h3>案例一</h3><div class="paper"><pre id="material"></pre></div></section><section class="case-area"><h3>案例二</h3><div class="paper"><pre>1.AI教育訓練
 
 2.高雄、基隆、台中、花蓮都要辦
@@ -111,7 +118,7 @@ body{background:#f2f5f5;color:#253a4b}
 
 4.要準備電腦跟網路
 
-5.課程內容要五個主題</pre></div></section></div></div></section><section class="slide s3" aria-label="第三頁：我的投影片元素要有？"><h2 class="heading">我的投影片元素要有？</h2><div class="wordfield"><span class="word w1" tabindex="0">頁數</span><span class="word w2" tabindex="0">設計風格</span><span class="word w3" tabindex="0">排版</span><span class="word w4" tabindex="0">頁碼</span><span class="word w5" tabindex="0">文字大小</span><span class="word w6" tabindex="0">字型</span></div><div class="mobile-hint">點選詞語，看看浮現效果</div></section><section class="slide s4" aria-label="第四頁：製作提示詞"><div class="prompt-title"><h2 class="prompt-heading">設計感轉為文字</h2><span class="case-label">案例一</span></div><div class="prompt-grid"><article class="prompt-block"><div class="prompt-bar"><h3>整體製作要求</h3><button class="copy-prompt" type="button" data-copy="prompt-0" aria-label="複製整體製作要求">複製文字</button></div><pre id="prompt-0">我要做一份簡報  以下我會用PAGE1、PAGE2區分  每一頁依照我的需求製作
+5.課程內容要五個主題</pre></div></section></div></div></section><section class="slide s3" aria-label="第三頁：我的投影片元素要有？"><h2 class="heading">我的投影片元素要有？</h2><div class="wordfield"><span class="word w1" tabindex="0">頁數</span><span class="word w2" tabindex="0">設計風格</span><span class="word w3" tabindex="0">排版</span><span class="word w4" tabindex="0">頁碼</span><span class="word w5" tabindex="0">文字大小</span><span class="word w6" tabindex="0">字型</span><span class="word w7" tabindex="0">圖片</span></div><div class="mobile-hint">點選詞語，看看浮現效果</div></section><section class="slide s4" aria-label="第四頁：製作提示詞"><div class="prompt-title"><h2 class="prompt-heading">設計感轉為文字</h2><span class="case-label">案例一</span></div><div class="prompt-grid"><article class="prompt-block"><div class="prompt-bar"><h3>整體製作要求</h3><button class="copy-prompt" type="button" data-copy="prompt-0" aria-label="複製整體製作要求">複製文字</button></div><pre id="prompt-0">我要做一份簡報  以下我會用PAGE1、PAGE2區分  每一頁依照我的需求製作
 
 簡報風格要簡約幾何線條風格設計、每頁右下角標頁碼(不要太大)、每一頁都可以自由編輯。
 
@@ -206,9 +213,21 @@ document.getElementById('material').textContent=material;const deck=document.get
  const field=document.querySelector('.s3 .wordfield');
  const nodes=[...field.querySelectorAll('.word')];
  const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
- const seeds=[[.08,.12],[.39,.06],[.73,.30],[.18,.48],[.48,.69],[.05,.73]];
- const particles=nodes.map((el,i)=>({el,x:0,y:0,vx:[44,-37,-43,39,-35,42][i],vy:[31,34,-29,-35,30,-28][i]}));
- let width=0,height=0,last=0,started=false;
+ const seeds=[[.08,.12],[.39,.06],[.73,.30],[.18,.48],[.48,.69],[.05,.73],[.72,.65]];
+ const particles=nodes.map((el,i)=>({el,x:0,y:0,vx:[44,-37,-43,39,-35,42,-38][i],vy:[31,34,-29,-35,30,-28,-32][i]}));
+ let width=0,height=0,last=0,started=false,selected=null,timer=null;
+ function release(){
+  if(timer!==null){clearTimeout(timer);timer=null}
+  if(selected){const el=selected.el;el.style.removeProperty('transform');el.style.removeProperty('opacity');el.style.removeProperty('transition');el.classList.remove('pinned');if(document.activeElement===el)el.blur();selected=null}
+ }
+ function pin(p){
+  release();selected=p;
+  const style=getComputedStyle(p.el);const transform=style.transform,opacity=style.opacity;
+  p.el.style.transition='none';p.el.style.transform=transform;p.el.style.opacity=opacity;p.el.classList.add('pinned');
+  timer=setTimeout(release,5000);
+ }
+ particles.forEach(p=>{p.el.addEventListener('click',e=>{e.stopPropagation();pin(p)});p.el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pin(p)}})});
+ document.querySelector('.s3').addEventListener('click',e=>{if(!e.target.closest('.word'))release()});
  function fit(initial){
   width=field.clientWidth;height=field.clientHeight;
   particles.forEach((p,i)=>{const w=p.el.offsetWidth,h=p.el.offsetHeight;if(initial){p.x=seeds[i][0]*Math.max(0,width-w);p.y=seeds[i][1]*Math.max(0,height-h)}p.x=Math.max(0,Math.min(p.x,Math.max(0,width-w)));p.y=Math.max(0,Math.min(p.y,Math.max(0,height-h)));p.el.style.left=p.x+'px';p.el.style.top=p.y+'px'});
@@ -216,13 +235,16 @@ document.getElementById('material').textContent=material;const deck=document.get
  function tick(t){
   if(!started){fit(true);started=true}const dt=last?Math.min((t-last)/1000,.04):0;last=t;
   if(!motion.matches){
-   for(const p of particles){if(p.el.matches(':hover, :focus'))continue;p.x+=p.vx*dt;p.y+=p.vy*dt;const maxX=Math.max(0,width-p.el.offsetWidth),maxY=Math.max(0,height-p.el.offsetHeight);if(p.x<=0){p.x=0;p.vx=Math.abs(p.vx)}else if(p.x>=maxX){p.x=maxX;p.vx=-Math.abs(p.vx)}if(p.y<=0){p.y=0;p.vy=Math.abs(p.vy)}else if(p.y>=maxY){p.y=maxY;p.vy=-Math.abs(p.vy)}}
+   for(const p of particles){if(p===selected)continue;p.x+=p.vx*dt;p.y+=p.vy*dt;const maxX=Math.max(0,width-p.el.offsetWidth),maxY=Math.max(0,height-p.el.offsetHeight);if(p.x<=0){p.x=0;p.vx=Math.abs(p.vx)}else if(p.x>=maxX){p.x=maxX;p.vx=-Math.abs(p.vx)}if(p.y<=0){p.y=0;p.vy=Math.abs(p.vy)}else if(p.y>=maxY){p.y=maxY;p.vy=-Math.abs(p.vy)}}
    for(let i=0;i<particles.length;i++)for(let j=i+1;j<particles.length;j++){
     const a=particles[i],b=particles[j],aw=a.el.offsetWidth,ah=a.el.offsetHeight,bw=b.el.offsetWidth,bh=b.el.offsetHeight;
     const dx=(a.x+aw/2)-(b.x+bw/2),dy=(a.y+ah/2)-(b.y+bh/2),ox=(aw+bw)/2-Math.abs(dx),oy=(ah+bh)/2-Math.abs(dy);
-    if(ox>0&&oy>0){if(ox<oy){const sign=dx<0?-1:1;a.x+=sign*ox/2;b.x-=sign*ox/2;const av=a.vx;a.vx=b.vx;b.vx=av}else{const sign=dy<0?-1:1;a.y+=sign*oy/2;b.y-=sign*oy/2;const av=a.vy;a.vy=b.vy;b.vy=av}}
+    if(ox>0&&oy>0){
+     if(a===selected||b===selected){const fixed=a===selected?a:b,moving=a===selected?b:a;const sx=(moving.x+moving.el.offsetWidth/2)<(fixed.x+fixed.el.offsetWidth/2)?-1:1,sy=(moving.y+moving.el.offsetHeight/2)<(fixed.y+fixed.el.offsetHeight/2)?-1:1;if(ox<oy){moving.x+=sx*ox;moving.vx=sx*Math.abs(moving.vx)}else{moving.y+=sy*oy;moving.vy=sy*Math.abs(moving.vy)}}
+     else if(ox<oy){const sign=dx<0?-1:1;a.x+=sign*ox/2;b.x-=sign*ox/2;const av=a.vx;a.vx=b.vx;b.vx=av}else{const sign=dy<0?-1:1;a.y+=sign*oy/2;b.y-=sign*oy/2;const av=a.vy;a.vy=b.vy;b.vy=av}
+    }
    }
-   particles.forEach(p=>{p.x=Math.max(0,Math.min(p.x,Math.max(0,width-p.el.offsetWidth)));p.y=Math.max(0,Math.min(p.y,Math.max(0,height-p.el.offsetHeight)));p.el.style.left=p.x+'px';p.el.style.top=p.y+'px'});
+   particles.forEach(p=>{if(p===selected)return;p.x=Math.max(0,Math.min(p.x,Math.max(0,width-p.el.offsetWidth)));p.y=Math.max(0,Math.min(p.y,Math.max(0,height-p.el.offsetHeight)));p.el.style.left=p.x+'px';p.el.style.top=p.y+'px'});
   }
   requestAnimationFrame(tick);
  }
