@@ -11,6 +11,8 @@ export default defineConfig({
     name: 'copy-course-pages',
     apply: 'build',
     closeBundle() {
+      mkdirSync(resolve(root, 'dist/src'), { recursive: true });
+      cpSync(resolve(root, 'src/main.js'), resolve(root, 'dist/src/main.js'));
       for (const folder of ['文字魔法變簡報', '圖文玩出簡報力', '實用工具百寶箱']) {
         const destination = resolve(root, 'dist/content', folder, 'pages');
         mkdirSync(destination, { recursive: true });
